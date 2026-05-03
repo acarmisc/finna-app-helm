@@ -1,0 +1,17 @@
+# Helm specific
+values-prod.yaml
+values-staging.yaml
+secrets/
+*.enc
+
+# IDE/Editor
+.idea/
+.vscode/
+*.swp
+
+# Environment files
+.env
+.env.*
+
+# Helm secrets plugin
+secrets.yaml.enc
