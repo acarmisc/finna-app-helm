@@ -2,9 +2,9 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/acarmisc/finna-app
+  repository: ghcr.io/acarmisc/finna-app/finops-api
   pullPolicy: Always
-  tag: "v0.4.6"
+  tag: "1.1.0"
 
 nameOverride: ""
 fullnameOverride: ""
