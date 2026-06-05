@@ -2,5 +2,5 @@ apiVersion: v2
 name: finna-app
 description: A Helm chart for Finna App deployment
 type: application
-version: 1.0.1
-appVersion: "1.1.0"
+version: 1.0.2
+appVersion: "1.4.0"
