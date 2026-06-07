@@ -1,0 +1,21 @@
+# Patterns to ignore when building Helm packages.
+.DS_Store
+.git/
+.gitignore
+.idea/
+.vscode/
+*.tmproj
+*.bak
+*.swp
+*.tgz
+*.orig
+.project
+.tox/
+.flake8
+
+# Frontend app — separate build, not part of the chart
+frontend/
+
+# Planning docs
+IMPLEMENTATION_PLAN.md
+README.md
