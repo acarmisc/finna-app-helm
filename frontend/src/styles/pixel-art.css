@@ -1,0 +1,362 @@
+/* =========================================================================
+   POLISH LAYER  (formerly the pixel-art layer)
+   Calm, professional FinOps dashboard styling for IT / finance teams.
+   Soft shadows, rounded corners, real typography, legible badges.
+   Layered on top of styles.css.
+   ========================================================================= */
+
+:root {
+  --radius-sm: 6px;
+  --radius:    8px;
+  --radius-lg: 12px;
+  --shadow-1: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.10);
+  --shadow-2: 0 2px 4px rgba(16,24,40,0.06), 0 4px 12px rgba(16,24,40,0.08);
+  --shadow-3: 0 8px 24px rgba(16,24,40,0.12), 0 2px 6px rgba(16,24,40,0.08);
+  --ring: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+}
+[data-theme="dark"] {
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.35);
+  --shadow-2: 0 2px 8px rgba(0,0,0,0.40);
+  --shadow-3: 0 12px 32px rgba(0,0,0,0.50);
+}
+
+/* ---------- Typography: titles in Inter, numbers tabular ---------- */
+.stat-val {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.stat-val .ccy {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-left: 5px !important;
+  color: var(--fg-muted);
+  vertical-align: 2px;
+}
+.stat-lbl {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--fg-muted);
+  line-height: 1.4;
+}
+.stat-meta { font-size: 12px !important; display: flex; flex-wrap: nowrap; align-items: baseline; gap: 6px; min-width: 0; }
+.stat-meta .delta { white-space: nowrap; font-weight: 600; }
+.stat-meta-sub { color: var(--fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+.page-head h1 {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+  text-transform: none !important;
+}
+.page-head .sub {
+  font-size: 13px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--fg-muted);
+}
+
+.sb-logo .wm {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.card-hd h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Cards: soft, rounded, calm ---------- */
+.card {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  position: relative;
+}
+.card-hd {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+}
+.card-hd h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--fg);
+}
+
+/* ---------- Stat / KPI cards ---------- */
+.stat {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+/* ---------- Buttons: clean, sentence case, no brackets ---------- */
+.btn {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 550;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.btn:hover { transform: none; box-shadow: var(--shadow-1); }
+.btn:active { transform: none; box-shadow: none; }
+.btn-primary { box-shadow: none; }
+.btn-primary:hover { box-shadow: 0 1px 2px color-mix(in oklab, var(--primary) 40%, transparent); }
+.btn-danger { box-shadow: none; }
+/* Hide the [ ] bracket affordance globally for a calmer look */
+.btn .brackets-l, .btn .brackets-r { display: none; }
+
+/* ---------- Inputs: soft focus ring ---------- */
+.inp, .sel, .txt, .inp-group {
+  border-radius: var(--radius-sm);
+}
+.inp { box-shadow: none; font-family: 'Inter', system-ui, sans-serif; }
+.inp.mono { font-family: 'JetBrains Mono', monospace; }
+.inp:focus, .sel:focus, .txt:focus, .inp-group:focus-within {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--ring);
+}
+
+/* ---------- Sidebar ---------- */
+.sb-item { position: relative; border-radius: var(--radius-sm); margin: 1px 6px; }
+.sb-item.active {
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--primary);
+  box-shadow: none;
+}
+.sb-item.active::before { content: none; }
+[data-theme="dark"] .sb-item.active { color: var(--fg); }
+
+/* ---------- Badges: soft pills, readable ---------- */
+.badge {
+  box-shadow: none;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: capitalize !important;
+  padding: 2px 9px !important;
+  line-height: 1.5 !important;
+}
+.provider-badge {
+  box-shadow: none;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  padding: 3px 6px !important;
+  line-height: 1.2 !important;
+}
+
+/* ---------- Dialog ---------- */
+.dialog {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3);
+  border: 1px solid var(--border) !important;
+  overflow: hidden;
+}
+.dialog-hd {
+  background: var(--surface);
+  color: var(--fg);
+  border-bottom: 1px solid var(--border);
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  padding: 14px 18px;
+}
+.dialog-hd .close {
+  background: transparent;
+  color: var(--fg-muted);
+  width: 22px; height: 22px;
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  border: none;
+  cursor: pointer;
+}
+.dialog-hd .close:hover { background: var(--surface-2); color: var(--fg); }
+
+/* ---------- Toast ---------- */
+.toast { box-shadow: var(--shadow-2); border-radius: var(--radius); }
+
+/* ---------- Progress bar: smooth, rounded, budget-friendly ---------- */
+.pbar {
+  height: 8px !important;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+  padding: 0;
+}
+.pbar > div {
+  height: 100%;
+  background: var(--primary) !important;
+  border-radius: 999px;
+  image-rendering: auto;
+  transition: width 400ms ease;
+}
+
+/* ---------- Steps wizard: clean numbered circles ---------- */
+.steps .step {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  padding: 8px 14px !important;
+  border-radius: 999px;
+  box-shadow: none;
+}
+.steps .step .n {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  border-radius: 999px;
+  font-weight: 650;
+}
+.steps .sep { font-family: 'Inter', system-ui, sans-serif; }
+
+/* ---------- Tables: clean, quiet ---------- */
+.tbl th {
+  background: var(--surface-2) !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg-muted);
+}
+.tbl tbody tr { transition: background 100ms ease; }
+.tbl tbody tr:hover { outline: none; }
+.tbl tr:hover td { background: var(--surface-2); }
+
+/* ---------- Tabs ---------- */
+.tabs .tab.active::before { content: none; }
+
+/* ---------- Login: calm hero ---------- */
+.login-brand {
+  background:
+    radial-gradient(ellipse at 25% 15%, color-mix(in oklab, var(--primary) 14%, transparent) 0%, transparent 55%),
+    var(--surface);
+}
+.login-brand-mark {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+.login-brand-headline h1 {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 40px !important;
+  font-weight: 680 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.025em !important;
+}
+.login-brand-headline h1 .accent { color: var(--primary); text-shadow: none; }
+.login-brand-headline p {
+  font-size: 15px;
+  line-height: 1.6;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.login-brand-stats .item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  padding: 12px 14px;
+  background: var(--surface);
+}
+.login-brand-stats .item .v {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.login-form h2 {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+}
+.login-card .title {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.sso-btn {
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.sso-btn:hover { transform: none; box-shadow: var(--shadow-1); }
+.sso-btn:active { transform: none; }
+
+/* ---------- Cursor ---------- */
+button, .btn, .sb-item, [role="button"], a { cursor: pointer; }
+
+/* ---------- Chips ---------- */
+.chip {
+  box-shadow: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* ---------- Skeleton ---------- */
+.skel {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+/* ---------- Empty state ---------- */
+.empty .msg { font-family: 'Inter', system-ui, sans-serif !important; }
+.empty h3 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Avatar ---------- */
+.avatar { box-shadow: none; border-radius: var(--radius-sm); }
+
+/* ---------- kbd ---------- */
+kbd {
+  display: inline-block;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 0 var(--border);
+  padding: 1px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* ---------- Keep SVGs / icons smooth ---------- */
+svg, img { image-rendering: auto; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .sso-btn, .pbar > div, .skel { transition: none; animation: none; }
+}

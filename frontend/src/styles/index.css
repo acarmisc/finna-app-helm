@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './pixel-art.css';
+@import './enhancements.css';
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-azure: var(--azure);
+  --color-gcp: var(--gcp);
+  --color-llm: var(--llm);
+  --color-aws: var(--aws);
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-display: 'VT323', monospace;
+
+  --radius: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}

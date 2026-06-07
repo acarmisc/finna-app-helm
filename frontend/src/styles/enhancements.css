@@ -1,0 +1,289 @@
+/* =========================================================================
+   FINNA v2 — ENHANCEMENTS LAYER
+   -------------------------------------------------------------------------
+   Loaded LAST (after styles.css + pixel-art.css). Three jobs:
+     1. BUGFIXES      — kill the truncation / overflow defects in the chrome
+     2. HOMOGENIZE    — one shared page/card/stat/filter vocabulary
+     3. DENSITY       — [data-density="compact"] global density switch
+     4. NEW WIDGETS   — styles for MoM bar chart + Top-movers list (kit.jsx)
+
+   PORTING NOTE (for the implementing React/Tailwind agent):
+   - The density switch is driven by `document.documentElement[data-density]`.
+     In production read it from Preferences.density and mirror to <html>.
+   - Everything keyed off CSS custom props below maps cleanly to Tailwind
+     `@theme` tokens — see HANDOFF.md §8.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   0 · Spacing scale (density-aware). Class-based paddings read these so the
+   compact switch can retune the whole app from one place.
+   ------------------------------------------------------------------------- */
+:root {
+  --space-page:    24px;   /* .page padding                     */
+  --space-card:    16px;   /* .card-bd / .card-hd padding       */
+  --space-cell-y:   9px;   /* table cell vertical padding       */
+  --space-cell-x:  12px;   /* table cell horizontal padding     */
+  --space-stat:    16px;   /* stat tile padding                 */
+  --gap-grid:      12px;   /* default grid gap                  */
+  --row-min:      200px;   /* stat-strip min column width       */
+}
+[data-density="compact"] {
+  --space-page:    16px;
+  --space-card:    11px;
+  --space-cell-y:   5px;
+  --space-cell-x:  10px;
+  --space-stat:    11px;
+  --gap-grid:       9px;
+  --row-min:      168px;
+}
+
+/* Wire the scale into the existing classes */
+.page      { padding: var(--space-page); }
+.card-bd   { padding: var(--space-card); }
+.card-hd   { padding: calc(var(--space-card) - 4px) var(--space-card); }
+.card-ft   { padding: calc(var(--space-card) - 6px) var(--space-card); }
+.stat      { padding: var(--space-stat); }
+.tbl th    { padding: var(--space-cell-y) var(--space-cell-x); }
+.tbl td    { padding: var(--space-cell-y) var(--space-cell-x); }
+.row       { gap: var(--gap-grid); }
+
+/* Compact tightens type on the data-heavy surfaces only (numbers stay legible) */
+[data-density="compact"] .stat-val { font-size: 22px !important; }
+[data-density="compact"] .tbl      { font-size: 11.5px; }
+[data-density="compact"] .page-head { margin-bottom: 14px; padding-bottom: 12px; }
+
+/* =========================================================================
+   1 · BUGFIXES — truncation & overflow defects seen across the chrome
+   ========================================================================= */
+
+/* 1a · Card header was truncating short titles ("Filte…", "Stats · 30 da…",
+   "Recent extractor ru…"). Give the title flexible room and force the
+   trailing actions to hold their intrinsic width instead of squeezing it. */
+.card-hd { gap: 12px; align-items: center; }
+.card-hd > h3 {
+  flex: 1 1 auto;
+  min-width: 0;            /* allow ellipsis only as a true last resort */
+}
+.card-hd > h3 + * { flex: 0 0 auto; }     /* the actions/links/chips block */
+.card-hd .hstack { flex-shrink: 0; }
+
+/* 1b · Chips & range pills must never wrap mid-label ("per-provider",
+   "30 days", "status: all"). */
+.chip { white-space: nowrap; }
+
+/* 1c · Topbar date range was wrapping to two lines on narrower viewports. */
+.tb-daterange { white-space: nowrap; flex-shrink: 0; }
+.tb-daterange span { white-space: nowrap; }
+.tb-actions { flex-shrink: 0; }
+.tb-crumb { flex: 0 1 auto; overflow: hidden; }
+.tb-crumb .last { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 1d · Tab labels ("Daily trend") wrapped to two lines. */
+.tabs .tab { white-space: nowrap; }
+
+/* 1e · Checkbox rows in the cost-explorer filter wrapped project names
+   ("prod- platform"). Keep them on one line. Ellipsis is scoped to the
+   scrollable project checklist only, so short provider labels never clip. */
+.checkbox { white-space: nowrap; }
+.checklist .checkbox { display: flex; }
+.checklist .checkbox .mono { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* 1f · HBarList (Top projects) was over-truncating names. Give the label
+   column more breathing room and a sensible min so names stay readable. */
+.hbar-row .hbar-label { min-width: 0; }
+
+/* =========================================================================
+   2 · HOMOGENIZE — shared vocabulary used by kit.jsx helpers
+   ========================================================================= */
+
+/* 2a · Stat strip — ONE responsive grid for every page's KPI row.
+   Replaces the brittle "5 vs 4 column" special-casing on the dashboard. */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--row-min), 1fr));
+  gap: var(--gap-grid);
+}
+
+/* 2b · Standard page-header action cluster — consistent gap + no-wrap. */
+.page-head .actions { flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+/* 2c · Filter bar — the consistent replacement for the ad-hoc chip rows
+   that were scattered (and non-functional) across pages. */
+.filterbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px var(--space-card);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+.filterbar .fb-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+  flex-shrink: 0;
+}
+.filterbar .spacer { flex: 1 1 auto; }
+.filterbar .muted, .filterbar .mono { white-space: nowrap; }
+
+/* A pill that LOOKS interactive and is keyboard-focusable. Used everywhere a
+   "status: all ▾" style control appears so all filters read the same. */
+.fpill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.fpill:hover { background: var(--surface-3); border-color: var(--fg-subtle); color: var(--fg); }
+.fpill b { color: var(--fg); font-weight: 600; }
+.fpill.on { background: color-mix(in oklab, var(--primary) 12%, var(--surface-2)); border-color: var(--primary); color: var(--fg); }
+.fpill svg { width: 12px; height: 12px; opacity: 0.7; }
+
+/* 2d · Customize affordances (per-page widget hide/show + reorder).
+   Shared by the dashboard and any page using useWidgetPrefs(). */
+.customize-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  margin-bottom: var(--gap-grid);
+  border: 1px dashed var(--primary);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--primary) 6%, var(--surface));
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+.customize-bar .restore-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.customize-bar .restore-pill:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Edit-mode chrome on a draggable widget / tile */
+.editable { position: relative; }
+.editable.dragging { opacity: 0.4; }
+.edit-handle {
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg-muted);
+  cursor: pointer;
+  z-index: 3;
+}
+.edit-handle:hover { border-color: var(--danger); color: var(--danger); }
+[data-editmode="1"] .editable { outline: 1px dashed var(--border-strong, var(--border)); outline-offset: 2px; cursor: move; }
+
+/* =========================================================================
+   3 · NEW WIDGET STYLES — MoM bars + Top movers (rendered by kit.jsx)
+   ========================================================================= */
+
+/* 3a · Month-over-month vertical bar chart */
+.mom {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: end;
+  gap: 10px;
+  height: 180px;
+  padding-top: 8px;
+}
+.mom-col { display: flex; flex-direction: column; align-items: center; height: 100%; gap: 6px; }
+.mom-bars { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
+.mom-bar {
+  width: 28%;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+  transition: height 400ms ease;
+}
+.mom-bar.cur { background: var(--primary); }
+.mom-bar.prev { background: var(--surface-3); border: 1px solid var(--border); }
+.mom-xlabel { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--fg-subtle); }
+.mom-xlabel.cur { color: var(--fg); font-weight: 600; }
+.mom-val { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--fg-muted); }
+
+/* 3b · Top movers — ranked biggest cost changes */
+.movers { display: flex; flex-direction: column; }
+.mover {
+  display: grid;
+  grid-template-columns: 18px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--border-2);
+}
+.mover:last-child { border-bottom: none; }
+.mover .rank { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--fg-subtle); text-align: right; }
+.mover .who { min-width: 0; }
+.mover .who .name { font-size: 13px; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mover .who .sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--fg-subtle); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mover .amount { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--fg); text-align: right; white-space: nowrap; }
+.mover .chg { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; text-align: right; min-width: 64px; white-space: nowrap; }
+.mover .chg.up { color: var(--danger); }
+.mover .chg.down { color: var(--accent); }
+
+/* 3c · Threshold markers on a budget progress bar (configurable thresholds) */
+.pbar.has-marks { overflow: visible; position: relative; }
+.pbar .mark {
+  position: absolute; top: -3px; bottom: -3px;
+  width: 2px;
+  background: var(--fg);
+  opacity: 0.55;
+}
+.pbar .mark.warn { background: var(--warning); }
+.pbar .mark.crit { background: var(--danger); }
+.mark-legend { display: flex; gap: 14px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--fg-muted); }
+.mark-legend .sw { display: inline-block; width: 10px; height: 3px; vertical-align: middle; margin-right: 5px; }
+
+/* 3d · Segmented control (used for density + small toggles) — consistent look */
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.seg button {
+  padding: 5px 11px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--fg-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg button:last-child { border-right: none; }
+.seg button.on { background: var(--primary); color: var(--primary-fg); }
+.seg button:not(.on):hover { background: var(--surface-3); color: var(--fg); }
+
+/* 3e · Define --border-strong used in a few inline styles but absent in dark
+   token set, so dashed customize borders don't disappear. */
+:root { --border-strong: #c2cad3; }
+[data-theme="dark"] { --border-strong: #46505b; }
